@@ -2,7 +2,7 @@
 
 **Role:** Electromechanical Subsystem Lead | **Platform:** ESP32 DevKit + DM542T Stepper Driver | **Actuator:** NEMA 23 (10:1 Gearbox) + Belt Drive Linear Actuator
 
-**Context:** Senior Capstone Project — Automated Welding Theory Lab for undergraduate welding education at RPI. Developed following the **NASA Systems Engineering Handbook (SP-2016-6105 Rev2)**.
+**Context:** Senior Capstone Project — Automated Welding Theory Lab for undergraduate welding education at RPI. Developed by referencing **ISO 14971** and the **NASA Systems Engineering Handbook (SP-2016-6105 Rev2)**.
 
 ---
 
@@ -166,6 +166,8 @@ no hardware stop signal -- the 30-second homing timeout in firmware
 (`HOMING_TIMEOUT_US`) was implemented directly in response to this finding
 as a software detection layer.
 
+Risk assessed per **ISO 14971**. Hazard: bracket detachment. Risk classification: High. Control measures: firmware homing timeout (software detection) + bracket replacement (primary mitigation).
+
 **Status:** Bracket replacement or reinforcement required before live
 weld testing. Non-negotiable deployment gate.
 
@@ -200,7 +202,7 @@ esp32-weld-motion-controller/
 
 ## About
 
-**Capstone Project** — RPI MATL Department  
+**Capstone Project** — Developed for the RPI MATL Department  
 **My role:** Electromechanical subsystem lead — speed analysis, microstepping configuration, state machine design, motion control firmware  
 **Collaborators:** GUI/frontend (teammate), wiring schematic (teammate)  
-**Methodology:** NASA Systems Engineering Handbook SP-2016-6105 Rev2
+**Methodology:** ISO 14971, NASA Systems Engineering Handbook SP-2016-6105 Rev2
