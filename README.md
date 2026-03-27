@@ -148,11 +148,33 @@ At full-step resolution (200 steps/rev), the minimum drive frequency of 70.7 Hz 
 
 ## 6. Hardware
 
-![Hardware assembly overview](media/hardware-assembly-labeled.png)
+![Hardware assembly overview](media/hardware_assembly_labeled.png)
+
 *Phase 2 hardware assembly -- belt drive linear actuator, NEMA 23 motor,
 DM542T stepper driver, ESP32 microcontroller, and 24V PSU.*
 
-## 7. Repository Structure
+## 7. Hardware Safety Audit (March 18, 2026)
+
+Physical inspection of the existing linear actuator assembly identified
+a safety-critical finding prior to firmware deployment.
+
+**Finding:** The home limit switch is mounted on a thin-walled plastic
+U-bracket attached to the actuator end plate. Stress fracturing was
+identified at the inner bracket corners under load. Bracket detachment
+during operation would result in loss of home position reference with
+no hardware stop signal -- the 30-second homing timeout in firmware
+(`HOMING_TIMEOUT_US`) was implemented directly in response to this finding
+as a software detection layer.
+
+**Status:** Bracket replacement or reinforcement required before live
+weld testing. Non-negotiable deployment gate.
+
+| | |
+|---|---|
+| ![Bracket isometric](docs/audit/phase2_limit-switch-bracket-isometric_mar2026.jpg) | ![Bracket bird's eye](docs/audit/phase2_limit-switch-bracket-birds-eye_mar2026.jpg) |
+| *Limit switch bracket installed on actuator end* | *Bracket removed -- stress fracturing visible at inner corners* |
+
+## 8. Repository Structure
 
 ```
 esp32-weld-motion-controller/
@@ -160,7 +182,7 @@ esp32-weld-motion-controller/
 │   └── main.cpp                  # ESP32 motion control firmware
 ├── docs/
 │   └── sketches/                 # Hand-drawn design artifacts (Phase 1)
-|   └── audit/
+|   └── audit/                    # Hardware safety audit photos (Phase 2)
 ├── media/
 │   └── system_photo.jpg
 └── README.md
@@ -168,7 +190,7 @@ esp32-weld-motion-controller/
 
 ---
 
-## 8. Engineering Retrospective
+## 9. Engineering Retrospective
 
 **Microstepping selection:** The 70.7 Hz → 565 Hz frequency shift from full-step to 1/8 microstep was the key configuration decision. At the required 21.2 RPM motor speed, full-step resonance would have been the dominant failure mode regardless of any other tuning.
 
