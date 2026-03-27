@@ -143,6 +143,8 @@ At full-step resolution (200 steps/rev), the minimum drive frequency of 70.7 Hz 
 | STEP pin | GPIO 25 → PUL- |
 | DIR pin | GPIO 26 → DIR- |
 | ENA pin | GPIO 27 → ENA- |
+| Limit switch | GPIO 32 (TBD -- two switches available, confirm before deployment) |
+| E-STOP software pin | GPIO 33 (TBD) |
 
 ---
 
