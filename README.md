@@ -140,9 +140,9 @@ At full-step resolution (200 steps/rev), the minimum drive frequency of 70.7 Hz 
 |---|---|
 | Microstepping | 1/8 (1600 PPR) |
 | Drive freq range | 565–752 Hz (6–8 IPM) |
-| STEP pin | GPIO 14 → PUL- |
-| DIR pin | GPIO 15 → DIR- |
-| ENA pin | GPIO 16 → ENA- |
+| STEP pin | GPIO 25 → PUL- |
+| DIR pin | GPIO 26 → DIR- |
+| ENA pin | GPIO 27 → ENA- |
 
 ---
 
