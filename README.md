@@ -14,7 +14,7 @@ The system replaces manual hand-welding (which introduces uncontrolled human var
 
 Weld samples produced by the system undergo multi-stage analysis at the RPI Materials Research Center (MRC): macroetching, optical microscopy, and fillet weld break testing.
 
-> **Full design rationale, trade studies, and speed derivations:** [Engineering Notebook Welding Log](https://github.com/abouzk/systems-engineering-notebook/logs/esp32-weld-motion-controller-log.md)
+> **Full design rationale, trade studies, and speed derivations:** [Engineering Notebook Welding Log](https://github.com/abouzk/systems-engineering-notebook/blob/main/logs/esp32-weld-motion-controller-log.md)
 
 ---
 
