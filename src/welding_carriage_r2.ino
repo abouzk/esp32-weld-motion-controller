@@ -56,7 +56,7 @@ enum SystemState {
   STANDBY,      // Idle, waiting for command
   HOMING,       // Moving in reverse to find the limit switch
   READY,        // At Position 0, cleared to weld
-  WELDING_FWD,  // Moving forward at 8 IPM
+  WELDING_FWD,  // Moving forward at 6-8 IPM
   FAULT         // Locked. Requires 'R' command after physical inspection.
 };
 
@@ -78,13 +78,13 @@ unsigned long homingStartMicros = 0;
 unsigned long travelStepCount   = 0;
 bool stepState                  = LOW;
 
-// Debounce timestamps — safe to use millis() here because we're in loop(), not an ISR
+// Debounce timestamps -- safe to use millis() here because we're in loop(), not an ISR
 unsigned long lastEStopDebounce = 0;
 unsigned long lastLimitDebounce = 0;
 
 
 // ==============================================================================
-// 7. ISRs — MINIMAL BY DESIGN
+// 7. ISRs -- MINIMAL BY DESIGN
 //
 // These do exactly two things and nothing else:
 //   1. Set a flag so loop() knows an event occurred.
@@ -122,7 +122,7 @@ void setup() {
   pinMode(STEP_PIN, OUTPUT);
   pinMode(DIR_PIN, OUTPUT);
 
-  // Safety input pins — INPUT_PULLUP uses the ESP32's internal 3.3V reference.
+  // Safety input pins -- INPUT_PULLUP uses the ESP32's internal 3.3V reference.
   // Hardware RC filters on these pins are a wiring requirement (see file header).
   pinMode(LIMIT_SWITCH_PIN, INPUT_PULLUP);
   //pinMode(ESTOP_PIN, INPUT_PULLUP);
@@ -137,7 +137,7 @@ void setup() {
   esp_task_wdt_init(WDT_TIMEOUT_S, true);
   esp_task_wdt_add(NULL); // Subscribe the main Arduino task
 
-  // Attach ISRs — FALLING = switch connects to GND (active with INPUT_PULLUP)
+  // Attach ISRs -- FALLING = switch connects to GND (active with INPUT_PULLUP)
   //attachInterrupt(digitalPinToInterrupt(ESTOP_PIN), eStopTriggered, FALLING); TODO: ESTOP_PIN not yet assigned
   //E-STOP hardware interrupt deferred to R3. Current E-STOP relies on hardware 24V cut only.
   attachInterrupt(digitalPinToInterrupt(LIMIT_SWITCH_PIN), limitSwitchTriggered, FALLING);
@@ -153,13 +153,13 @@ void setup() {
 
 
 // ==============================================================================
-// 9. FAULT ENTRY — Centralised fault handler
+// 9. FAULT ENTRY -- Centralised fault handler
 // All fault conditions funnel through this function. Never inline a fault.
 // ==============================================================================
 void enterFault(const char* reason) {
   currentState = FAULT;
   digitalWrite(STEP_PIN, LOW);
-  stepState = LOW;           // Sync software state with physical pin (NEW-02 fix)
+  stepState = LOW;           // Sync software state with physical pin
   travelStepCount = 0;
   Serial.print("\n*** FAULT: ");
   Serial.println(reason);
@@ -235,7 +235,7 @@ void loop() {
     else if (cmd == 'H' || cmd == 'h') {
       if (currentState == STANDBY) {
 
-        // NEW-01 FIX: Check if carriage is ALREADY sitting on the limit switch.
+        // FIX: Check if carriage is ALREADY sitting on the limit switch.
         // If so, driving in reverse immediately grinds into the wall.
         // Short-circuit directly to READY instead.
         if (digitalRead(LIMIT_SWITCH_PIN) == LOW) {
@@ -245,9 +245,9 @@ void loop() {
         } else {
           Serial.println("Executing HOMING sequence...");
           digitalWrite(DIR_PIN, LOW);
-          delayMicroseconds(DIR_SETUP_TIME_US); // HIGH-03 FIX: DM542T dir setup time
-          homingStartMicros = micros();         // NEW-03 FIX: Start the homing timeout clock
-          stepState = LOW;                      // NEW-02 FIX: Ensure clean pulse state on entry
+          delayMicroseconds(DIR_SETUP_TIME_US); // FIX: DM542T dir setup time
+          homingStartMicros = micros();         // FIX: Start the homing timeout clock
+          stepState = LOW;                      // FIX: Ensure clean pulse state on entry
           currentState = HOMING;
         }
 
@@ -264,8 +264,8 @@ void loop() {
         Serial.println("Executing WELDING FWD at 8 IPM...");
         travelStepCount = 0;
         digitalWrite(DIR_PIN, HIGH);
-        delayMicroseconds(DIR_SETUP_TIME_US); // HIGH-03 FIX: DM542T dir setup time
-        stepState = LOW;                      // NEW-02 FIX: Ensure clean pulse state on entry
+        delayMicroseconds(DIR_SETUP_TIME_US); // FIX: DM542T dir setup time
+        stepState = LOW;                      // FIX: Ensure clean pulse state on entry
         currentState = WELDING_FWD;
       } else {
         Serial.println("SAFETY LOCK: Cannot weld. Must be in READY state. Home the carriage first.");
@@ -279,7 +279,7 @@ void loop() {
       if (currentState == WELDING_FWD || currentState == HOMING) {
         currentState = STANDBY;
         digitalWrite(STEP_PIN, LOW);
-        stepState = LOW;    // NEW-02 FIX: Sync software state with physical pin
+        stepState = LOW;    // FIX: Sync software state with physical pin
         Serial.println("STOPPED. STATE: STANDBY.");
         Serial.println("Position is now unknown. Send 'H' to re-home before welding.");
       } else {
@@ -288,7 +288,7 @@ void loop() {
     }
 
     // --- [R] RESET FAULT ---
-    // CRITICAL-03 FIX: Explicit two-step recovery. Cannot skip to H directly.
+    // FIX: Explicit two-step recovery. Cannot skip to H directly.
     // The operator must send R (acknowledging the fault) then H (to re-home).
     // This forces a deliberate, conscious decision before the machine moves again.
     else if (cmd == 'R' || cmd == 'r') {
@@ -315,7 +315,7 @@ void loop() {
   switch (currentState) {
 
     case HOMING:
-      // NEW-03 FIX: Homing timeout. If the limit switch is never found,
+      // FIX: Homing timeout. If the limit switch is never found,
       // the limit switch wire may be broken or disconnected. Fault immediately.
       if (currentMicros - homingStartMicros > HOMING_TIMEOUT_US) {
         enterFault("HOMING TIMEOUT — Limit switch not triggered in 30s. Check wiring.");
@@ -329,7 +329,7 @@ void loop() {
       break;
 
     case WELDING_FWD:
-      // HIGH-02 FIX: Software travel limit — a "digital wall."
+      // FIX: Software travel limit — a "digital wall."
       // If the physical limit switch wire fails open, this is the last line of defense.
       if (travelStepCount >= MAX_TRAVEL_STEPS) {
         enterFault("SOFTWARE TRAVEL LIMIT REACHED — Physical limit switch may have failed.");
