@@ -146,7 +146,13 @@ At full-step resolution (200 steps/rev), the minimum drive frequency of 70.7 Hz 
 
 ---
 
-## 6. Repository Structure
+## 6. Hardware
+
+![Hardware assembly overview](media/hardware-assembly-labeled.png)
+*Phase 2 hardware assembly -- belt drive linear actuator, NEMA 23 motor,
+DM542T stepper driver, ESP32 microcontroller, and 24V PSU.*
+
+## 7. Repository Structure
 
 ```
 esp32-weld-motion-controller/
@@ -154,6 +160,7 @@ esp32-weld-motion-controller/
 │   └── main.cpp                  # ESP32 motion control firmware
 ├── docs/
 │   └── sketches/                 # Hand-drawn design artifacts (Phase 1)
+|   └── audit/
 ├── media/
 │   └── system_photo.jpg
 └── README.md
@@ -161,7 +168,7 @@ esp32-weld-motion-controller/
 
 ---
 
-## 7. Engineering Retrospective
+## 8. Engineering Retrospective
 
 **Microstepping selection:** The 70.7 Hz → 565 Hz frequency shift from full-step to 1/8 microstep was the key configuration decision. At the required 21.2 RPM motor speed, full-step resonance would have been the dominant failure mode regardless of any other tuning.
 
