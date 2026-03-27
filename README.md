@@ -190,6 +190,11 @@ esp32-weld-motion-controller/
 └── README.md
 ```
 
+## Phase definitions
+Phase 1 -- paper design and requirements (Jan–Feb 2026)
+Phase 2 -- physical hardware assembly and audit (Mar 2026)
+Phase 3 -- firmware development and motion validation (active)
+
 ---
 
 ## 9. Engineering Retrospective
