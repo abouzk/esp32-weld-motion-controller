@@ -2,7 +2,7 @@
 
 **Role:** Electromechanical Subsystem Lead | **Platform:** ESP32 DevKit + DM542T Stepper Driver | **Actuator:** NEMA 23 (10:1 Gearbox) + Belt Drive Linear Actuator
 
-**Context:** Senior Capstone Project — Automated Welding Theory Lab for undergraduate welding education at RPI. Developed by referencing **ISO 14971** and the **NASA Systems Engineering Handbook (SP-2016-6105 Rev2)**.
+**Context:** Senior Capstone Project — Automated Welding Theory Lab for undergraduate welding education at RPI.
 
 ---
 
